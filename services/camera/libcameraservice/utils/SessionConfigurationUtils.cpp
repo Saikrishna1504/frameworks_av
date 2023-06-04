@@ -198,8 +198,7 @@ bool roundBufferDimensionNearest(int32_t width, int32_t height,
         auto entry = info.find(ANDROID_REQUEST_AVAILABLE_CAPABILITIES);
         for (size_t i = 0; i < entry.count; ++i) {
             uint8_t capability = entry.data.u8[i];
-            if (capability == ANDROID_REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA ||
-                    capability == ANDROID_REQUEST_AVAILABLE_CAPABILITIES_RAW) {
+            if (capability == ANDROID_REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA) {
                 isLogicalCamera = true;
                 break;
             }
@@ -491,7 +490,7 @@ binder::Status createSurfaceFromGbp(
         return STATUS_ERROR(CameraService::ERROR_ILLEGAL_ARGUMENT, msg.string());
     }
     if (timestampBase < OutputConfiguration::TIMESTAMP_BASE_DEFAULT ||
-            timestampBase > OutputConfiguration::TIMESTAMP_BASE_CHOREOGRAPHER_SYNCED) {
+            timestampBase > OutputConfiguration::TIMESTAMP_BASE_MAX) {
         String8 msg = String8::format("Camera %s: invalid timestamp base %d",
                 logicalCameraId.string(), timestampBase);
         ALOGE("%s: %s", __FUNCTION__, msg.string());

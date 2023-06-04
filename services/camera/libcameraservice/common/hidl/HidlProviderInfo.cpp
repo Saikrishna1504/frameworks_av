@@ -655,6 +655,11 @@ HidlProviderInfo::HidlDeviceInfo3::HidlDeviceInfo3(
         ALOGE("%s: Unable to override zoomRatio related tags: %s (%d)",
                 __FUNCTION__, strerror(-res), res);
     }
+    res = addReadoutTimestampTag(/*readoutTimestampSupported*/false);
+    if (OK != res) {
+        ALOGE("%s: Unable to add sensorReadoutTimestamp tag: %s (%d)",
+                __FUNCTION__, strerror(-res), res);
+    }
 
     camera_metadata_entry flashAvailable =
             mCameraCharacteristics.find(ANDROID_FLASH_INFO_AVAILABLE);
@@ -912,7 +917,8 @@ status_t HidlProviderInfo::convertToHALStreamCombinationAndCameraIdsLocked(
         bool overrideForPerfClass =
                 SessionConfigurationUtils::targetPerfClassPrimaryCamera(
                         perfClassPrimaryCameraIds, cameraId, targetSdkVersion);
-        res = mManager->getCameraCharacteristicsLocked(cameraId, overrideForPerfClass, &deviceInfo);
+        res = mManager->getCameraCharacteristicsLocked(cameraId, overrideForPerfClass, &deviceInfo,
+                /*overrideToPortrait*/true);
         if (res != OK) {
             return res;
         }
@@ -920,7 +926,7 @@ status_t HidlProviderInfo::convertToHALStreamCombinationAndCameraIdsLocked(
                 [this](const String8 &id, bool overrideForPerfClass) {
                     CameraMetadata physicalDeviceInfo;
                     mManager->getCameraCharacteristicsLocked(id.string(), overrideForPerfClass,
-                                                   &physicalDeviceInfo);
+                            &physicalDeviceInfo, /*overrideToPortrait*/true);
                     return physicalDeviceInfo;
                 };
         std::vector<std::string> physicalCameraIds;
